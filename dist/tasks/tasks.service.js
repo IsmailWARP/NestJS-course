@@ -18,7 +18,27 @@ let TasksService = class TasksService {
         return this.tasks;
     }
     getTaskById(id) {
-        return this.tasks.find((task) => task.id === id);
+        const found = this.tasks.find((task) => task.id === id);
+        if (!found) {
+            throw new common_1.NotFoundException(`Task with ID ${id} not found.`);
+        }
+        return found;
+    }
+    getTasksWithFilters(filterDto) {
+        const { status, search } = filterDto;
+        let tasks = this.getAllTasks();
+        if (status) {
+            tasks = tasks.filter((task) => task.status === status);
+        }
+        if (search) {
+            tasks = tasks.filter((task) => {
+                if (task.title.includes(search) || task.description.includes(search)) {
+                    return true;
+                }
+                return false;
+            });
+        }
+        return tasks;
     }
     createTask(createTaskDto) {
         const { title, description } = createTaskDto;
@@ -32,7 +52,8 @@ let TasksService = class TasksService {
         return task;
     }
     deleteTask(id) {
-        this.tasks = this.tasks.filter((task) => task.id !== id);
+        const found = this.getTaskById(id);
+        this.tasks = this.tasks.filter((task) => task.id !== found.id);
     }
     updateTaskStatus(id, status) {
         const task = this.getTaskById(id);
