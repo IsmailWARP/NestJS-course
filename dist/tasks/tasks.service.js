@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksService = void 0;
 const common_1 = require("@nestjs/common");
-const task_status_enum_1 = require("./task-status-enum");
 const tasks_repository_1 = require("./tasks.repository");
 const typeorm_1 = require("@nestjs/typeorm");
 let TasksService = class TasksService {
@@ -24,19 +23,27 @@ let TasksService = class TasksService {
     async getTaskById(id) {
         const found = await this.tasksRepository.findOneBy({ id });
         if (!found) {
-            throw new common_1.NotFoundException(`Task with ID ${id} not found.`);
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
         }
         return found;
     }
-    async createTask(createTaskDto) {
-        const { title, description } = createTaskDto;
-        const task = this.tasksRepository.create({
-            title,
-            description,
-            status: task_status_enum_1.TaskStatus.OPEN,
-        });
+    async getTasks(filterDto) {
+        return await this.tasksRepository.getTasks(filterDto);
+    }
+    createTask(createTaskDto) {
+        return this.tasksRepository.createTask(createTaskDto);
+    }
+    async updateTaskStatus(id, status) {
+        const task = await this.getTaskById(id);
+        task.status = status;
         await this.tasksRepository.save(task);
         return task;
+    }
+    async deleteTask(id) {
+        const result = await this.tasksRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Task with ID "${id}" not found`);
+        }
     }
 };
 TasksService = __decorate([

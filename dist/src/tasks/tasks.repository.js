@@ -10,13 +10,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksRepository = void 0;
-const typeorm_1 = require("typeorm");
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("typeorm");
+const task_status_enum_1 = require("./task-status.enum");
 const task_entity_1 = require("./task.entity");
 let TasksRepository = class TasksRepository extends typeorm_1.Repository {
     constructor(dataSource) {
         super(task_entity_1.Task, dataSource.createEntityManager());
         this.dataSource = dataSource;
+    }
+    async getTasks(filterDto) {
+        const { status, search } = filterDto;
+        const query = this.createQueryBuilder('task');
+        if (status) {
+            query.andWhere('task.status = :status', { status });
+        }
+        if (search) {
+            query.andWhere('LOWER(task.title) LIKE LOWER(:search) OR LOWER(task.description) LIKE LOWER(:search)', { search: `%${search}%` });
+        }
+        const tasks = await query.getMany();
+        return tasks;
+    }
+    async createTask(createTaskDto) {
+        const { title, description } = createTaskDto;
+        const task = this.create({
+            title,
+            description,
+            status: task_status_enum_1.TaskStatus.OPEN,
+        });
+        await this.save(task);
+        return task;
     }
 };
 TasksRepository = __decorate([

@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
+import { TasksController } from "./tasks/tasks.controller";
 import { TasksModule } from "./tasks/tasks.module";
-
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { TasksService } from "./tasks/tasks.service";
+import { DataSource } from "typeorm";
+import { TasksRepository } from "./tasks/tasks.repository";
 @Module({
   imports: [
     TasksModule,
@@ -14,10 +16,13 @@ import { TasksModule } from "./tasks/tasks.module";
       password: "postgres",
       database: "task-management",
       autoLoadEntities: true,
-      synchronize: true, //use only in development mode, otherwise you will lose production data.
+      synchronize: true,
     }),
   ],
+  controllers: [TasksController],
+  providers: [TasksService, TasksRepository],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
 }
+

@@ -11,9 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
+const tasks_controller_1 = require("./tasks/tasks.controller");
 const tasks_module_1 = require("./tasks/tasks.module");
+const typeorm_1 = require("@nestjs/typeorm");
+const tasks_service_1 = require("./tasks/tasks.service");
+const typeorm_2 = require("typeorm");
+const tasks_repository_1 = require("./tasks/tasks.repository");
 let AppModule = class AppModule {
     constructor(dataSource) {
         this.dataSource = dataSource;
@@ -34,6 +37,8 @@ AppModule = __decorate([
                 synchronize: true,
             }),
         ],
+        controllers: [tasks_controller_1.TasksController],
+        providers: [tasks_service_1.TasksService, tasks_repository_1.TasksRepository],
     }),
     __metadata("design:paramtypes", [typeorm_2.DataSource])
 ], AppModule);
