@@ -1,4 +1,4 @@
-import { TaskStatus } from './task-status.enum';
+import { TaskStatus } from "./task-status.enum";
 export declare class Task {
     id: string;
     title: string;

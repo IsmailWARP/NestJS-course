@@ -15,7 +15,7 @@ const task_status_enum_1 = require("./task-status.enum");
 let Task = class Task {
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
     __metadata("design:type", String)
 ], Task.prototype, "id", void 0);
 __decorate([
